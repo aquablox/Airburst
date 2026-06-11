@@ -12,6 +12,7 @@
   <img alt="Minecraft 1.21.1" src="https://img.shields.io/badge/Minecraft-1.21.1-62b47a?style=for-the-badge">
   <img alt="NeoForge 21.1.x" src="https://img.shields.io/badge/NeoForge-21.1.x-f16436?style=for-the-badge">
   <img alt="Create 6.0.8+" src="https://img.shields.io/badge/Create-6.0.8+-d7a34a?style=for-the-badge">
+  <a href="https://github.com/aquablox/Airburst"><img alt="GitHub repository" src="https://img.shields.io/badge/GitHub-aquablox%2FAirburst-24292f?style=for-the-badge&logo=github"></a>
 </p>
 
 ## Overview
