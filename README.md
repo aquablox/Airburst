@@ -1,7 +1,7 @@
 # Create: Airburst
 
 <p align="center">
-  <img src="docs/airburst_wand_render.png" alt="Airburst Wand render" width="520">
+  <img src="src/main/resources/icon.png" alt="Create: Airburst icon" width="256">
 </p>
 
 <p align="center">

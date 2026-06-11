@@ -1,6 +1,5 @@
 package com.aquablox.airburst.content;
 
-import com.aquablox.airburst.Airburst;
 import com.aquablox.airburst.config.AirburstConfigs;
 import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.aquablox.airburst.registry.AirburstItems;
@@ -12,23 +11,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-@EventBusSubscriber(modid = Airburst.MOD_ID)
 public class AirburstAbility {
     public static final String FALL_GRACE_TICKS_TAG = "AirburstFallGraceTicks";
     public static final String LAST_Y_VELOCITY_TAG = "AirburstLastYVelocity";
     public static final int FALL_GRACE_TICKS = 100;
-    private static final int MOUNTED_IMPULSE_RETRY_TICKS = 2;
-    private static final double MOUNTED_IMPULSE_RETRY_THRESHOLD = 0.5D;
-    private static final Map<UUID, PendingMountedImpulse> PENDING_MOUNTED_IMPULSES = new HashMap<>();
 
     public static void tryAirburst(ServerPlayer player) {
         tryAirburst(player, false);
@@ -80,10 +69,13 @@ public class AirburstAbility {
             target = mountedTarget.entity();
             velocity = Math.max(0.0D, AirburstConfigs.mountedAirburstVelocity()
                     - AirburstConfigs.mountedAirburstChainPenalty() * mountedTarget.extraVehicleCount());
-            queueMountedImpulseRetry(target, direction, target.getDeltaMovement().dot(direction) + velocity);
+            if (target.getControllingPassenger() == player) {
+                return;
+            }
         }
 
-        applyImpulse(target, direction.scale(velocity));
+        Vec3 impulse = direction.scale(velocity);
+        applyImpulse(target, impulse);
     }
 
     private static void applyImpulse(Entity target, Vec3 impulse) {
@@ -103,42 +95,6 @@ public class AirburstAbility {
         return new MountedTarget(target, extraVehicleCount);
     }
 
-    private static void queueMountedImpulseRetry(Entity target, Vec3 direction, double desiredProjection) {
-        if (desiredProjection > 0.0D) {
-            PENDING_MOUNTED_IMPULSES.put(target.getUUID(), new PendingMountedImpulse(direction, desiredProjection, MOUNTED_IMPULSE_RETRY_TICKS));
-        }
-    }
-
-    @SubscribeEvent
-    public static void restoreMountedImpulse(EntityTickEvent.Post event) {
-        Entity entity = event.getEntity();
-        if (entity.level().isClientSide()) {
-            return;
-        }
-
-        PendingMountedImpulse pending = PENDING_MOUNTED_IMPULSES.get(entity.getUUID());
-        if (pending == null) {
-            return;
-        }
-
-        double projection = entity.getDeltaMovement().dot(pending.direction());
-        if (projection >= pending.desiredProjection() * MOUNTED_IMPULSE_RETRY_THRESHOLD) {
-            PENDING_MOUNTED_IMPULSES.remove(entity.getUUID());
-            return;
-        }
-
-        applyImpulse(entity, pending.direction().scale(pending.desiredProjection() - projection));
-        if (pending.attemptsRemaining() <= 1) {
-            PENDING_MOUNTED_IMPULSES.remove(entity.getUUID());
-        } else {
-            PENDING_MOUNTED_IMPULSES.put(entity.getUUID(), new PendingMountedImpulse(
-                    pending.direction(),
-                    pending.desiredProjection(),
-                    pending.attemptsRemaining() - 1
-            ));
-        }
-    }
-
     private static ItemStack findBacktankWithEnoughAir(Player player) {
         List<ItemStack> tanks = BacktankUtil.getAllWithAir(player);
         for (ItemStack tank : tanks) {
@@ -150,8 +106,5 @@ public class AirburstAbility {
     }
 
     private record MountedTarget(Entity entity, int extraVehicleCount) {
-    }
-
-    private record PendingMountedImpulse(Vec3 direction, double desiredProjection, int attemptsRemaining) {
     }
 }

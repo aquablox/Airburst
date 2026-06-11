@@ -7,6 +7,9 @@ import com.aquablox.airburst.network.AirburstPackets;
 import com.aquablox.airburst.registry.AirburstItems;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -64,9 +67,47 @@ public class AirburstClient {
             if (AirburstItems.isAirburstWand(minecraft.player.getMainHandItem())
                 || AirburstItems.isAirburstWand(minecraft.player.getOffhandItem())) {
                 ExtendoGripRenderHandler.mainHandAnimation = 0.95F;
+                applyControlledVehicleImpulse(minecraft.player, reverse);
                 minecraft.player.getCooldowns().addCooldown(AirburstItems.AIRBURST_WAND.get(), AirburstConfigs.airburstCooldownTicks());
                 PacketDistributor.sendToServer(new AirburstPackets.AirburstUsePayload(reverse));
             }
+        }
+
+        private static void applyControlledVehicleImpulse(Player player, boolean reverse) {
+            if (!player.isPassenger()) {
+                return;
+            }
+
+            MountedTarget mountedTarget = findMountedTarget(player);
+            Entity target = mountedTarget.entity();
+            if (target.getControllingPassenger() != player) {
+                return;
+            }
+
+            double velocity = Math.max(0.0D, AirburstConfigs.mountedAirburstVelocity()
+                    - AirburstConfigs.mountedAirburstChainPenalty() * mountedTarget.extraVehicleCount());
+            Vec3 direction = player.getLookAngle().normalize();
+            if (reverse) {
+                direction = direction.scale(-1.0D);
+            }
+
+            target.push(direction.scale(velocity));
+            target.hurtMarked = true;
+        }
+
+        private static MountedTarget findMountedTarget(Player player) {
+            Entity target = player.getVehicle();
+            int extraVehicleCount = 0;
+
+            while (target != null && target.isPassenger() && target.getVehicle() != null) {
+                target = target.getVehicle();
+                extraVehicleCount++;
+            }
+
+            return new MountedTarget(target, extraVehicleCount);
+        }
+
+        private record MountedTarget(Entity entity, int extraVehicleCount) {
         }
     }
 }
