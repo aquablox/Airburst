@@ -101,4 +101,4 @@ build/libs/
 
 Create: Airburst is licensed under the MIT License with an attribution requirement.
 
-Any modified version, fork, redistribution, or derivative work must clearly reference the original **Create: Airburst** project wherever it is officially published, including GitHub or any future location if the project moves.
+Any modified version, fork, redistribution, or derivative work must clearly reference the original **Create: Airburst** project wherever it is officially published, including either GitHub, Modrinth, or any future location where the project is officially published by the authors.
