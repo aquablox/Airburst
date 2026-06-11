@@ -63,8 +63,8 @@ public class AirburstAbility {
         if (player.isPassenger()) {
             MountedTarget mountedTarget = findMountedTarget(player);
             target = mountedTarget.entity();
-            velocity = Math.max(0.0D, AirburstWandItem.MOUNTED_AIRBURST_VELOCITY
-                    - AirburstWandItem.MOUNTED_AIRBURST_CHAIN_PENALTY * mountedTarget.extraVehicleCount());
+            velocity = Math.max(0.0D, AirburstConfigs.mountedAirburstVelocity()
+                    - AirburstConfigs.mountedAirburstChainPenalty() * mountedTarget.extraVehicleCount());
         }
 
         Vec3 impulse = player.getLookAngle().normalize().scale(reverse ? -velocity : velocity);

@@ -48,6 +48,26 @@ public class AirburstConfigs {
         return (float) AirburstWandItem.DEFAULT_AIRBURST_VELOCITY;
     }
 
+    public static float mountedAirburstVelocity() {
+        if (server != null) {
+            return server.mountedAirburstVelocity.getF();
+        }
+        if (common != null) {
+            return common.defaultMountedAirburstVelocity.getF();
+        }
+        return (float) AirburstWandItem.MOUNTED_AIRBURST_VELOCITY;
+    }
+
+    public static float mountedAirburstChainPenalty() {
+        if (server != null) {
+            return server.mountedAirburstChainPenalty.getF();
+        }
+        if (common != null) {
+            return common.defaultMountedAirburstChainPenalty.getF();
+        }
+        return (float) AirburstWandItem.MOUNTED_AIRBURST_CHAIN_PENALTY;
+    }
+
     public static void register(ModContainer modContainer) {
         common = register(CCommon::new, ModConfig.Type.COMMON);
         server = register(CServer::new, ModConfig.Type.SERVER);
@@ -77,6 +97,12 @@ public class AirburstConfigs {
         public final ConfigFloat defaultAirburstVelocity = f((float) AirburstWandItem.DEFAULT_AIRBURST_VELOCITY, 0.0F, 10.0F,
                 "defaultAirburstVelocity",
                 "Default Airburst Wand launch velocity, in blocks per tick, used before a world-specific server config overrides it.");
+        public final ConfigFloat defaultMountedAirburstVelocity = f((float) AirburstWandItem.MOUNTED_AIRBURST_VELOCITY, 0.0F, 10.0F,
+                "defaultMountedAirburstVelocity",
+                "Default Airburst Wand launch velocity while riding, in blocks per tick, used before a world-specific server config overrides it.");
+        public final ConfigFloat defaultMountedAirburstChainPenalty = f((float) AirburstWandItem.MOUNTED_AIRBURST_CHAIN_PENALTY, 0.0F, 10.0F,
+                "defaultMountedAirburstChainPenalty",
+                "Default velocity subtracted for each extra vehicle in a riding chain, used before a world-specific server config overrides it.");
 
         @Override
         public String getName() {
@@ -91,6 +117,12 @@ public class AirburstConfigs {
         public final ConfigFloat airburstVelocity = f((float) AirburstWandItem.DEFAULT_AIRBURST_VELOCITY, 0.0F, 10.0F,
                 "airburstVelocity",
                 "Velocity added by an Airburst Wand use, in blocks per tick.");
+        public final ConfigFloat mountedAirburstVelocity = f((float) AirburstWandItem.MOUNTED_AIRBURST_VELOCITY, 0.0F, 10.0F,
+                "mountedAirburstVelocity",
+                "Velocity added by an Airburst Wand use while riding, in blocks per tick.");
+        public final ConfigFloat mountedAirburstChainPenalty = f((float) AirburstWandItem.MOUNTED_AIRBURST_CHAIN_PENALTY, 0.0F, 10.0F,
+                "mountedAirburstChainPenalty",
+                "Velocity subtracted for each extra vehicle in a riding chain.");
 
         @Override
         public String getName() {
