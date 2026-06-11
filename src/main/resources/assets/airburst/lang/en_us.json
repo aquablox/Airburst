@@ -1,0 +1,10 @@
+{
+  "itemGroup.airburst": "Create: Airburst",
+  "item.airburst.airburst_wand": "Airburst Wand",
+  "item.airburst.incomplete_airburst_wand": "Incomplete Airburst Wand",
+  "key.categories.airburst": "Create: Airburst",
+  "key.airburst.airburst": "Airburst",
+  "key.airburst.reverse_airburst": "Reverse Airburst",
+  "airburst.no_wand": "Airburst Wand required",
+  "airburst.no_air": "Backtank pressure required"
+}
