@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -44,10 +45,7 @@ public class AirburstAbility {
 
         player.getCooldowns().addCooldown(AirburstItems.AIRBURST_WAND.get(), AirburstConfigs.airburstCooldownTicks());
 
-        float velocity = AirburstConfigs.airburstVelocity();
-        Vec3 impulse = player.getLookAngle().normalize().scale(reverse ? -velocity : velocity);
-        player.setDeltaMovement(player.getDeltaMovement().add(impulse));
-        player.hurtMarked = true;
+        applyAirburstImpulse(player, reverse);
         player.getPersistentData().putInt(FALL_GRACE_TICKS_TAG, FALL_GRACE_TICKS);
         player.getPersistentData().putDouble(LAST_Y_VELOCITY_TAG, player.getDeltaMovement().y);
 
@@ -58,6 +56,34 @@ public class AirburstAbility {
         return AirburstItems.isAirburstWand(player.getMainHandItem()) || AirburstItems.isAirburstWand(player.getOffhandItem());
     }
 
+    private static void applyAirburstImpulse(ServerPlayer player, boolean reverse) {
+        Entity target = player;
+        double velocity = AirburstConfigs.airburstVelocity();
+
+        if (player.isPassenger()) {
+            MountedTarget mountedTarget = findMountedTarget(player);
+            target = mountedTarget.entity();
+            velocity = Math.max(0.0D, AirburstWandItem.MOUNTED_AIRBURST_VELOCITY
+                    - AirburstWandItem.MOUNTED_AIRBURST_CHAIN_PENALTY * mountedTarget.extraVehicleCount());
+        }
+
+        Vec3 impulse = player.getLookAngle().normalize().scale(reverse ? -velocity : velocity);
+        target.setDeltaMovement(target.getDeltaMovement().add(impulse));
+        target.hurtMarked = true;
+    }
+
+    private static MountedTarget findMountedTarget(ServerPlayer player) {
+        Entity target = player.getVehicle();
+        int extraVehicleCount = 0;
+
+        while (target != null && target.isPassenger() && target.getVehicle() != null) {
+            target = target.getVehicle();
+            extraVehicleCount++;
+        }
+
+        return new MountedTarget(target, extraVehicleCount);
+    }
+
     private static ItemStack findBacktankWithEnoughAir(Player player) {
         List<ItemStack> tanks = BacktankUtil.getAllWithAir(player);
         for (ItemStack tank : tanks) {
@@ -66,5 +92,8 @@ public class AirburstAbility {
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    private record MountedTarget(Entity entity, int extraVehicleCount) {
     }
 }

@@ -18,8 +18,6 @@
 
 **Create: Airburst** adds the **Airburst Wand**, an Extendo Grip variant crafted with Breeze components and powered by Create backtank pressure. It keeps the normal Extendo Grip reach behavior, including offhand and mixed Extendo Grip handling, while adding configurable directional burst movement.
 
-The wand uses the Extendo Grip model as its base and swaps the gripper hand for a Wind Charge visual when no held item needs to be displayed.
-
 ## Features
 
 | Feature | Details |
@@ -41,8 +39,6 @@ Create: Airburst uses Create deploying recipes:
 | --- | --- | --- | --- |
 | 1 | Breeze Rod | Extendo Grip | Incomplete Airburst Wand |
 | 2 | Precision Mechanism | Incomplete Airburst Wand | Airburst Wand |
-
-The incomplete item is recipe-only and is not listed in the Creative Mode tab.
 
 ## Controls
 
