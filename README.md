@@ -25,6 +25,7 @@
 | Extendo Grip behavior | Functions like Create's Extendo Grip for reach, offhand use, held items, and mixed grip behavior. |
 | Airburst | Press `R` by default to launch in the precise direction you are facing. |
 | Reverse Airburst | Press `G` by default to launch in the opposite direction. |
+| Mounted Airburst | While riding, the burst affects the top entity in the riding chain. Mounted velocity starts at `1.0` and loses `0.2` for each extra vehicle in the chain. |
 | Backtank powered | Survival use consumes `10` backtank pressure units. Creative players do not consume pressure. |
 | Configurable tuning | Cooldown and launch velocity are configurable with Create/Catnip config files. |
 | Cooldown | Default cooldown is `10` ticks. |
@@ -57,8 +58,12 @@ Create: Airburst registers both common defaults and world/server overrides throu
 | --- | --- | --- | --- |
 | Common | `defaultAirburstCooldownTicks` | `10` | `0` to `200` |
 | Common | `defaultAirburstVelocity` | `1.2` | `0.0` to `10.0` |
+| Common | `defaultMountedAirburstVelocity` | `1.0` | `0.0` to `10.0` |
+| Common | `defaultMountedAirburstChainPenalty` | `0.2` | `0.0` to `10.0` |
 | Server | `airburstCooldownTicks` | `10` | `0` to `200` |
 | Server | `airburstVelocity` | `1.2` | `0.0` to `10.0` |
+| Server | `mountedAirburstVelocity` | `1.0` | `0.0` to `10.0` |
+| Server | `mountedAirburstChainPenalty` | `0.2` | `0.0` to `10.0` |
 
 Server config values are used for gameplay when present. Common config values provide the default baseline before a world-specific server config is active.
 
